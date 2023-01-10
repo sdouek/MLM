@@ -1,10 +1,9 @@
 from sqlalchemy import Column,  Integer, Sequence, String, Boolean
-from base import Base
-
+from src.database.base import Base
 
 
 class User(Base):
-    __table_name__ = 'user'
+    __tablename__ = 'users'
 
     id = Column('id', Integer, Sequence('Id'), primary_key=True)
     email = Column('email', String(64), nullable=False) # unique index
