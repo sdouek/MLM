@@ -27,10 +27,11 @@ def registration(db):
 
     print("request register user: {}".format(request.url))
     print("request body: {}".format(request.json))
-    user_name = request.json.get('user_name')
+    body = request.json
+    user_name = body.get('user_name')
     # email is the password
-    email = request.json.get('email')
-    is_admin = request.json.get('is_admin')
+    email = body.get('email')
+    is_admin = body.get('is_admin')
     # Before crete user , check if the user already exist
     existing_user = LibraryDB().get_user(db, user_name, email)
     if existing_user:
@@ -52,23 +53,38 @@ def validate_user_credentials(username, email):
 
 @library_app.route('/book', method=['POST'])
 @auth_basic(validate_user_credentials)
-def add_books(db):
+def add_book(db):
     username = request.auth[0]
     email = request.auth[1]
     is_admin_user = LibraryDB().is_admin_user(db, username, email)
     if is_admin_user:
-        print(is_admin_user)
-        # TODO: add book
-        return {'status_code': '200', 'message': 'TODO'}
+        body = request.json
+        book_title = body.get('book_title')
+        author_name = body.get('author_name')
+        book_created = LibraryDB.add_book(db,  author_name, book_title)
+        if book_created:
+            return {'status_code': '200', 'message': 'Book added successfully'}
     else:
         return {'status_code': '403', 'message': 'Forbidden for a non admin permission to add new book to the catalog'}
 
-@library_app.route('/book/{book_id}', method=['DELETE'])
-def delete_book():
-    pass
 
-@library_app.route('/books/catalog', method=['GET'])
-def catalog():
+@library_app.route('/book/<book_id>', method=['DELETE'])
+@auth_basic(validate_user_credentials)
+def delete_book(db, book_id):
+    username = request.auth[0]
+    email = request.auth[1]
+    is_admin_user = LibraryDB().is_admin_user(db, username, email)
+    if is_admin_user:
+        book_removed = LibraryDB.remove_book(book_id)
+        if book_removed:
+            return {'status_code': '200', 'message': 'Book removed successfully'}
+    else:
+        return {'status_code': '403', 'message': 'Forbidden for a non admin permission to remove book from the catalog'}
+
+
+@library_app.route('/book', method=['GET'])
+@auth_basic(validate_user_credentials)
+def catalog(db):
     return 'Catalog!'
 
 
