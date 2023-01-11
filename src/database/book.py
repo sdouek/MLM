@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, Sequence, String
-from src.database.base import Base
+from database.base import Base
 
 
 class Book(Base):
@@ -11,7 +11,7 @@ class Book(Base):
     user_id = Column(Integer, ForeignKey('users.id'))
     # TODO checked_out_date
 
-    def __int__(self, author_name, book_title):
+    def __init__(self, author_name, book_title):
         self.book_title = book_title
         self.author_name = author_name
 

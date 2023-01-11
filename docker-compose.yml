@@ -14,11 +14,11 @@ services:
     ports:
       - "3307:3306"
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      #MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: "MLM_DB"
       MYSQL_ROOT_PASSWORD: "sql1234"
-      MYSQL_USER: 'sara'
-      MYSQL_PASSWORD: 'a1234'
+      #MYSQL_USER: 'm_user'
+      #MYSQL_PASSWORD: 'a:123456'
 
     volumes:
       - ./src/database/createDB.sql:/docker-entrypoint-initdb.d/run_createDB.sql

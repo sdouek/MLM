@@ -1,5 +1,5 @@
-from src.database.book import Book
-from src.database.user import User
+from database.book import Book
+from database.user import User
 from sqlalchemy import func
 
 
