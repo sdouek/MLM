@@ -59,11 +59,13 @@ def add_book(db):
     is_admin_user = LibraryDB().is_admin_user(db, username, email)
     if is_admin_user:
         body = request.json
+        if not body:
+            return {'status_code': '400', 'message': 'Bad Request: not book details provided in json request'}
         book_title = body.get('book_title')
         author_name = body.get('author_name')
-        book_created = LibraryDB.add_book(db,  author_name, book_title)
-        if book_created:
-            return {'status_code': '200', 'message': 'Book added successfully'}
+        book_id = LibraryDB.add_book(db,  author_name, book_title)
+        if book_id:
+            return {'status_code': '200', 'message': 'Book id : {} added successfully'.format(book_id)}
     else:
         return {'status_code': '403', 'message': 'Forbidden for a non admin permission to add new book to the catalog'}
 
@@ -75,17 +77,26 @@ def delete_book(db, book_id):
     email = request.auth[1]
     is_admin_user = LibraryDB().is_admin_user(db, username, email)
     if is_admin_user:
-        book_removed = LibraryDB.remove_book(book_id)
+        book_removed = LibraryDB.remove_book(db, book_id)
         if book_removed:
             return {'status_code': '200', 'message': 'Book removed successfully'}
     else:
         return {'status_code': '403', 'message': 'Forbidden for a non admin permission to remove book from the catalog'}
 
 
-@library_app.route('/book', method=['GET'])
+@library_app.route('/catalog', method=['GET'])
 @auth_basic(validate_user_credentials)
-def catalog(db):
-    return 'Catalog!'
+def get_catalog(db):
+    body = request.json
+    if not body:
+        return {'status_code': '400', 'message': 'Bad Request: not book details provided in json request'}
+    book_title = body.get('book_title')
+    author_name = body.get('author_name')
+    is_available = body.get('is_available') # TODO: validate is a boolean input
+    catalog = LibraryDB.get_catalog(db, author_name, book_title, is_available)
+    if not catalog:
+        return {'status_code': '404', 'message': 'Not books found for this filter'}
+    return {'status_code': '200', 'message': 'Catalog for your filter: {}'.format(catalog)}
 
 
 if __name__ == '__main__':

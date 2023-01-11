@@ -15,3 +15,10 @@ class Book(Base):
         self.book_title = book_title
         self.author_name = author_name
 
+
+    def to_client_catalog(self):
+        return {'book_id': self.id,
+                'book_title': self.book_title,
+                'author_name': self.author_name
+                }
+
