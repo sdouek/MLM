@@ -6,13 +6,13 @@ from sqlalchemy import func
 class LibraryDB:
 
     @classmethod
-    def get_user_by_email(cls, db, email):
-        user = db.query(User).filter_by(email=email).first()
+    def get_user(cls, db, user_name, email):
+        user = db.query(User).filter(User.name == user_name, User.email == email).first()
         return user
 
     @classmethod
-    def is_admin_user(cls, db, email):
-        user = LibraryDB.get_user_by_email(db, email)
+    def is_admin_user(cls, db, user_name, email):
+        user = LibraryDB.get_user(db, user_name, email)
         return user.is_admin
 
     @classmethod
@@ -20,13 +20,14 @@ class LibraryDB:
         user = User(name, email, is_admin)
         LibraryDB.add_row(db, user)
         db.commit()
-        #TODO: if user already exist ? (code 409)
+        return True
 
     @classmethod
     def add_book(cls, db, author_name, book_title):
         book = Book(author_name, book_title)
         LibraryDB.add_row(db, book)
         db.commit()
+        return True
 
     @classmethod
     def get_book(cls, db, author_name, book_title):
@@ -37,6 +38,7 @@ class LibraryDB:
     def remove_book(cls, db, book_id):
         db.query(Book).filter(Book.id == book_id).delete()
         db.commit()
+        return True
 
     @classmethod
     def add_row(cls, db, obj):

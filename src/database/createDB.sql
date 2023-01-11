@@ -31,7 +31,8 @@ CREATE TABLE `books` (
   `user_id` varchar(64) DEFAULT NULL,
   `checked_out_date`  DATETIME(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `book_title_unique_idx` (`book_title`)
+  UNIQUE KEY `book_title_unique_idx` (`book_title`),
+  CONSTRAINT `user_id_fk` FOREIGN KEY `user_id` REFERENCES `users` (`id`) ON DELETE SET NULL,
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table stores book information';
 
 commit;
