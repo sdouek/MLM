@@ -1,9 +1,7 @@
 from database.book import Book
 from database.user import User
 from sqlalchemy import func
-
-
-class LibraryDB:
+lass LibraryDB:
 
     @classmethod
     def get_user(cls, db, user_name, email):
@@ -25,14 +23,10 @@ class LibraryDB:
     @classmethod
     def add_book(cls, db, author_name, book_title):
         book = Book(author_name, book_title)
+        # TODO: handle case book already exist
         LibraryDB.add_row(db, book)
         db.commit()
-        return True
-
-    @classmethod
-    def get_book(cls, db, author_name, book_title):
-        book = db.query(Book).filter(Book.author_name == author_name, Book.book_title == book_title).first()
-        return book
+        return book.id
 
     @classmethod
     def remove_book(cls, db, book_id):
@@ -46,20 +40,28 @@ class LibraryDB:
         db.commit()
 
     @classmethod
-    def get_books(cls, db, author_name, book_title, is_available):
+    def get_catalog(cls, db, author_name, book_title, is_available):
         try:
-            query_filter = db.query.filter()
+            query = db.query(Book)
             if author_name:
-                query_filter = query_filter.fiter(Book.author_name == author_name)
+                query = query.filter(Book.author_name == author_name)
             if book_title:
-                query_filter = query_filter.fiter(Book.book_title == book_title)
+                query = query.filter(Book.book_title == book_title)
+            # if is_available is None:
+            #     print('nothing')
             if is_available:
-                query_filter = query_filter.fiter(Book.user_id == 'None')
-
-            books = db.query(Book).filter(query_filter).all()
+                query = query.filter(Book.user_id.is_(None))
+            elif not is_available:
+                query = query.filter(Book.user_id.is_(not None))
+            books = query.all()
+            if not books:
+                return False
+            catalog = []
+            for book in books:
+                catalog.extend([book.to_client_catalog()])
         except Exception as e:
-            raise e
-        return books
+            raise ValueError("Can't fetch books from the database, please check the input parameters") from e
+        return catalog
 
     @classmethod
     def checkout_book_by_id(cls, db, user_id, book_id):
