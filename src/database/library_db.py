@@ -6,18 +6,18 @@ from sqlalchemy import func
 class LibraryDB:
 
     @classmethod
-    def get_user(cls, db, user_name, email):
-        user = db.query(User).filter(User.name == user_name, User.email == email).first()
+    def get_user(cls, db, user_name):
+        user = db.query(User).filter_by(name=user_name).first()
         return user
 
     @classmethod
-    def is_admin_user(cls, db, user_name, email):
-        user = LibraryDB.get_user(db, user_name, email)
+    def is_admin_user(cls, db, user_name):
+        user = LibraryDB.get_user(db, user_name)
         return user.is_admin
 
     @classmethod
-    def add_user(cls, db, name, email, is_admin=False):
-        user = User(name, email, is_admin)
+    def add_user(cls, db, name, password, is_admin=False):
+        user = User(name, password, is_admin)
         LibraryDB.add_row(db, user)
         db.commit()
         return True

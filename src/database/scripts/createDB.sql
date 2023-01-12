@@ -15,14 +15,14 @@ DROP TABLE IF EXISTS MLM_DB.books;
 
 CREATE TABLE `users` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `email` VARCHAR(64) NOT NULL,
+    `password` VARCHAR(64) NOT NULL,
     `name` VARCHAR(64) NOT NULL,
     `is_admin` BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `email_unique_idx` (`email`)
+    UNIQUE KEY `password_unique_idx` (`password`)
 )  ENGINE=INNODB DEFAULT CHARSET=LATIN1 COMMENT='This table stores all users';
 
-INSERT INTO `MLM_DB`.`users` (`email`, `name`, `is_admin`) VALUES ('sara@gmail.com', 'sara', true);
+INSERT INTO `MLM_DB`.`users` (`password`, `name`, `is_admin`) VALUES ('sara@gmail.com', 'sara', true);
 
 CREATE TABLE `books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
