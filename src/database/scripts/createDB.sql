@@ -22,17 +22,17 @@ CREATE TABLE `users` (
     UNIQUE KEY `email_unique_idx` (`email`)
 )  ENGINE=INNODB DEFAULT CHARSET=LATIN1 COMMENT='This table stores all users';
 
-INSERT INTO `MLM_DB`.`users` (`id`, `email`, `name`, `is_admin`) VALUES ('1', 'sara', 'sar@jjj.com', NULL);
+INSERT INTO `MLM_DB`.`users` (`email`, `name`, `is_admin`) VALUES ('sara@gmail.com', 'sara', true);
 
 CREATE TABLE `books` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `book_title` varchar(64) NOT NULL,
   `author_name`  varchar(64) NOT NULL,
-  `user_id` varchar(64) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `checked_out_date`  DATETIME(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `book_title_unique_idx` (`book_title`),
-  CONSTRAINT `user_id_fk` FOREIGN KEY `user_id` REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table stores book information';
 
 commit;
