@@ -5,7 +5,7 @@ ADD . /MLM/
 RUN pip install -r requirements.txt
 
 EXPOSE 8084
-CMD ["python3",  "src/app.py"]
+CMD ["python3", "src/app.py", "--host=0.0.0.0"]
 #ENTRYPOINT ["python", "-m", "src.app", "-p", "8084"]
 
 #FROM mysql:8.0
