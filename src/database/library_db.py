@@ -1,7 +1,9 @@
 from database.book import Book
 from database.user import User
 from sqlalchemy import func
-lass LibraryDB:
+
+
+class LibraryDB:
 
     @classmethod
     def get_user(cls, db, user_name, email):
@@ -64,35 +66,35 @@ lass LibraryDB:
         return catalog
 
     @classmethod
-    def checkout_book_by_id(cls, db, user_id, book_id):
+    def checkout_book_by_id(cls, db, book_id, user_id):
         book = LibraryDB.get_book_by_id(db, book_id)
         if book and book.user_id is None:
             total_checkout = LibraryDB.get_total_checked_out_books(db, user_id)
             if total_checkout >= 10:
-                return False, 'max limit of checkout books'
+                return False, 'Max limit of checkout books'
             book.user_id = user_id
             db.commit()
-            return True
-        return False
+            return True, ''
+        return False, 'Book: {} is not available for checkout'.format(book_id)
 
     @classmethod
     def get_book_by_id(cls, db, book_id):
-        book = db.query(Book).filter(Book.id == book_id)
+        book = db.query(Book).filter(Book.id == book_id).first()
         return book
 
     @classmethod
     def get_total_checked_out_books(cls, db, user_id):
-        total_checked_out = db.query(func.count(Book)).filter(Book.user_id == user_id).scalar()
+        total_checked_out = db.query(func.count(Book.id)).filter(Book.user_id == user_id).scalar()
         return total_checked_out
 
     @classmethod
     def return_book(cls, db, book_id, user_id):
-        book = LibraryDB.get_book_by_book_id(db, book_id)
+        book = LibraryDB.get_book_by_id(db, book_id)
         if book.user_id == user_id:
             book.user_id = None
             db.commit()
-            return True
-        return False
+            return True, ''
+        return False, 'Book: {} is not checked out by you'.format(book_id)
 
     @classmethod
     def view_checked_out_books_by_userid(cls, db, user_id):

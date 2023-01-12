@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from bottle_sqlalchemy import SQLAlchemyPlugin
 from database.library_db import LibraryDB
-
+#TODO: use HTTP modules
 
 logger = logging.getLogger(__name__)
 library_app = Bottle()
@@ -98,6 +98,25 @@ def get_catalog(db):
         return {'status_code': '404', 'message': 'Not books found for this filter'}
     return {'status_code': '200', 'message': 'Catalog for your filter: {}'.format(catalog)}
 
+
+@library_app.route('/checkout/book/<book_id>', method=['PUT'])
+@auth_basic(validate_user_credentials)
+def checkout_book(db, book_id):
+    user = LibraryDB.get_user(db, request.auth[0], request.auth[1])
+    checked_out_book, msg = LibraryDB.checkout_book_by_id(db, book_id, user.id)
+    if not checked_out_book:
+        return {'status_code': '429', 'message': msg}
+    return {'status_code': '200', 'message': 'Book: {} checked out for user: {} successfully'.format(book_id, request.auth[0])}
+
+
+@library_app.route('/return/book/<book_id>', method=['PUT'])
+@auth_basic(validate_user_credentials)
+def return_book(db, book_id):
+    user = LibraryDB.get_user(db, request.auth[0], request.auth[1])
+    book_returned, msg = LibraryDB.return_book(db, book_id, user.id)
+    if not book_returned:
+        return {'status_code': '409', 'message': msg}
+    return {'status_code': '200', 'message': 'Book: {} returned successfully'.format(book_id)}
 
 if __name__ == '__main__':
     run(library_app, host='0.0.0.0', port=8084, debug=True)
