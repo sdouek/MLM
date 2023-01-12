@@ -49,8 +49,6 @@ class LibraryDB:
                 query = query.filter(Book.author_name == author_name)
             if book_title:
                 query = query.filter(Book.book_title == book_title)
-            # if is_available is None:
-            #     print('nothing')
             if is_available:
                 query = query.filter(Book.user_id.is_(None))
             elif not is_available:
@@ -64,6 +62,19 @@ class LibraryDB:
         except Exception as e:
             raise ValueError("Can't fetch books from the database, please check the input parameters") from e
         return catalog
+
+    @classmethod
+    def get_checked_out_by_user(cls, db, user_id=None):
+        try:
+            books = db.query(Book).filter(Book.user_id == user_id).all()
+            if not books:
+                return False
+            books_list = []
+            for book in books:
+                books_list.extend([book.to_client_catalog()])
+        except Exception as e:
+            raise ValueError("Can't fetch books from the database, please check the user id") from e
+        return books_list
 
     @classmethod
     def checkout_book_by_id(cls, db, book_id, user_id):

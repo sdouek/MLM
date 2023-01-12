@@ -118,6 +118,28 @@ def return_book(db, book_id):
         return {'status_code': '409', 'message': msg}
     return {'status_code': '200', 'message': 'Book: {} returned successfully'.format(book_id)}
 
+
+@library_app.route('/checked_out/book', method=['GET'])
+@auth_basic(validate_user_credentials)
+def view_checked_out_books(db):
+    username = request.auth[0]
+    email = request.auth[1]
+    body = request.json
+    is_admin_user = LibraryDB().is_admin_user(db, username, email)
+    if not is_admin_user and not username == body.get('username'):
+        return {'status_code': '403',
+                'message': 'Forbidden for a non admin permission to view checked out books from other users'}
+    user = LibraryDB.get_user(db, body.get('user_name'), body.get('email')) if is_admin_user \
+            else LibraryDB.get_user(db, request.auth[0], request.auth[1])
+    if not user:
+        return {'status_code': '404', 'message': 'Not found user'}
+    checked_out_books = LibraryDB.get_checked_out_by_user(db, user.id)
+    if not checked_out_books:
+        return {'status_code': '404', 'message': 'Not books found for user {}'.format(user.name)}
+    return {'status_code': '200', 'message': 'Books checked out by user {} : {}'.format(user.name, checked_out_books)}
+
+
+
 if __name__ == '__main__':
     run(library_app, host='0.0.0.0', port=8084, debug=True)
 
