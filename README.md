@@ -1,5 +1,5 @@
 # Mobileye Library Management System
-![img.png](README pics/img.png)
+![img.png](./README pics/img.png)
 This project is a library management system using MySQL as the database, Docker-compose for containerization, and Script Automatic for automatic DB table creation and management.
 The project is implemented using the Scala-Alchemy model, which provides a high-level API for interacting with the database. 
 The system allows users to keep track of books in a library, including adding, editing, and deleting books, as well as checking out and returning books.
@@ -11,9 +11,9 @@ These instructions will get you a copy of the project up and running on your loc
 - MySql Workbench - is advanced , only for debugging
 # Installing
 1. Clone the repository to your local machine:
-![img_3.png](README pics/img_3.png)
+![img_3.png](./README pics/img_3.png)
 2. Navigate to the project directory and run the following command to start the application:
- ![img_6.png](README pics/img_6.png)
+ ![img_6.png](./README pics/img_6.png)
  This cmd will start the entire system!  MySQL server and the application in separate containers.
 3. The application will be accessible at http://127.0.0.1:8084
 # Usage
@@ -34,9 +34,9 @@ https://app.swaggerhub.com/apis-docs/SARIMIMIG/Mobileye-Library-Management/1.1
 - cd MLM/tests
 - MLM.postman_collection with all tests api can be import to postman and run 
 - Test example:
-![img_1.png](README pics/img_1.png)
- Basic Auth is needed: ![img_2.png](README pics/img_2.png)
- The result is in DB: ![img_4.png](README pics/img_4.png)
+![img_1.png](./README pics/img_1.png)
+ Basic Auth is needed: ![img_2.png](./README pics/img_2.png)
+ The result is in DB: ![img_4.png](./README pics/img_4.png)
 
 # Built With
 - [Docker](https://www.docker.com/) - Containerization platform
