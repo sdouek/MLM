@@ -1,7 +1,7 @@
 # Mobileye Library Management System
 ![img.png](./README pics/img.png)
 This project is a library management system using MySQL as the database, Docker-compose for containerization, and Script Automatic for automatic DB table creation and management.
-The project is implemented using the Scala-Alchemy model, which provides a high-level API for interacting with the database. 
+The project is implemented using the SQLAlchemym model, which allowing the object model and database schema to develop in a cleanly decoupled way from the beginning.
 The system allows users to keep track of books in a library, including adding, editing, and deleting books, as well as checking out and returning books.
 # Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
