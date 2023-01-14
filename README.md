@@ -11,8 +11,10 @@ These instructions will get you a copy of the project up and running on your loc
 - MySql Workbench - is advanced , only for debugging
 # Installing
 1. Clone the repository to your local machine:
+**git clone https://github.com/sdouek/MLM.git**
 ![img_3.png](./README pics/img_3.png)
 2. Navigate to the project directory and run the following command to start the application:
+**dokcer-compose up --build**
  ![img_6.png](./README pics/img_6.png)
  This cmd will start the entire system!  MySQL server and the application in separate containers.
 3. The application will be accessible at http://127.0.0.1:8084
