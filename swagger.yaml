@@ -1,0 +1,302 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Library Management System",
+    "description" : "API for managing books in a library, allows users to keep track of books in a library, including adding, editing, and deleting books, as well as checking out and returning books.",
+    "version" : "1.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/SARIMIMIG/Mobileye-Library-Management/1.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  }, {
+    "url" : "http://127.0.0.0:8084"
+  } ],
+  "security" : [ {
+    "basicAuth" : [ ]
+  } ],
+  "paths" : {
+    "/user/register" : {
+      "post" : {
+        "description" : "Register a new user",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/user_register_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful registration"
+          },
+          "400" : {
+            "description" : "Bad request. pls check input request"
+          },
+          "409" : {
+            "description" : "User already exist"
+          }
+        }
+      }
+    },
+    "/book" : {
+      "post" : {
+        "description" : "Add a new book - allow admin users only",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/book_body"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Book added successfully"
+          },
+          "400" : {
+            "description" : "Bad Request: not book details provided in json request"
+          },
+          "403" : {
+            "description" : "Forbidden for a non admin permission to add new book to the catalog"
+          }
+        },
+        "security" : [ {
+          "basicAuth" : [ ]
+        } ]
+      }
+    },
+    "/book/{book_id}" : {
+      "delete" : {
+        "description" : "Delete a book - allow admin users only",
+        "parameters" : [ {
+          "name" : "book_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Book deleted successfully"
+          },
+          "403" : {
+            "description" : "Forbidden for a non admin permission to delete a book"
+          },
+          "404" : {
+            "description" : "Book not found"
+          }
+        },
+        "security" : [ {
+          "basicAuth" : [ ]
+        } ]
+      }
+    },
+    "/catalog" : {
+      "get" : {
+        "description" : "Get the catalog of books. Allow users to filter by author name, book title, and whether the book is available for check-out.",
+        "parameters" : [ {
+          "name" : "book_title",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "author_name",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "is_available",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request: not book details provided in json request"
+          },
+          "404" : {
+            "description" : "Not books found for this filter"
+          }
+        },
+        "security" : [ {
+          "basicAuth" : [ ]
+        } ]
+      }
+    },
+    "/checkout/book/{book_id}" : {
+      "put" : {
+        "description" : "Checkout a book. Limit the number of books a user can checkout to 10 total.",
+        "parameters" : [ {
+          "name" : "book_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "Too many requests"
+          }
+        },
+        "security" : [ {
+          "basicAuth" : [ ]
+        } ]
+      }
+    },
+    "/return/book/{book_id}" : {
+      "put" : {
+        "description" : "Allow registered users to return book they have checked out",
+        "parameters" : [ {
+          "name" : "book_id",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Book not found"
+          },
+          "409" : {
+            "description" : "Book not checked out"
+          }
+        },
+        "security" : [ {
+          "basicAuth" : [ ]
+        } ]
+      }
+    },
+    "/checked_out/book/{user_name}" : {
+      "get" : {
+        "description" : "View checked out books by user:   a. Registered users should only be allowed to see the books they have checked out. b. Admin users should be allowed to see all books that are checked out by every user",
+        "parameters" : [ {
+          "name" : "user_name",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                }
+              }
+            }
+          },
+          "403" : {
+            "description" : "Forbidden for a non admin permission to view checked out books from other users"
+          },
+          "404" : {
+            "description" : "Not found user"
+          }
+        },
+        "security" : [ {
+          "basicAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "user_register_body" : {
+        "required" : [ "is_admin", "password", "user_name" ],
+        "type" : "object",
+        "properties" : {
+          "user_name" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "is_admin" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "book_body" : {
+        "required" : [ "author_name", "book_title" ],
+        "type" : "object",
+        "properties" : {
+          "book_title" : {
+            "type" : "string"
+          },
+          "author_name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "inline_response_200" : {
+        "type" : "object",
+        "properties" : {
+          "status_code" : {
+            "type" : "integer"
+          },
+          "message" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}
